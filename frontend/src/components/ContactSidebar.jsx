@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 const ContactSidebar = ({ activeContact, onSelectContact }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const goSettings = () => navigate("/settings");
   const { onlineUsers } = useSocket();
   const [contacts, setContacts] = useState([]);
   const [collapsed, setCollapsed] = useState(false);
@@ -65,26 +66,36 @@ const ContactSidebar = ({ activeContact, onSelectContact }) => {
     }`}
     >
       <div className="contact-sidebar__header">
-      <button
-        className="contact-sidebar__menu"
-        onClick={() => setCollapsed(!collapsed)}
-      >
-        ☰
-      </button>
+        
+        <button
+          className="contact-sidebar__menu"
+          onClick={() => setCollapsed(!collapsed)}
+        >
+          ☰
+        </button>
+
         <div
           className="contact-sidebar__user"
           onClick={() => navigate("/profile")}
           style={{ cursor: "pointer" }}
         >
-          <div className="contact-sidebar__avatar">
+        <div className="contact-sidebar__avatar">
             {user.name.charAt(0).toUpperCase()}
           </div>
           {!collapsed && (
           <div className="contact-sidebar__user-info">
             <span className="contact-sidebar__user-name">{user.name}</span>
             <span className="contact-sidebar__user-id">@{user.userId}</span>
-          </div>)}
+          </div>)}        
         </div>
+
+        <button
+            className="contact-sidebar__settings"
+            onClick={goSettings}
+          >
+            ⚙
+        </button>
+      
       </div>
 
       {!collapsed && (
