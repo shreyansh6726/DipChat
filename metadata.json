@@ -1,5 +1,0 @@
-{
-  "name": "Contacts Chat",
-  "description": "A social messaging application with contact-based chatting, real-time WebSockets, push notifications, search history, and end-to-end encrypted messaging.",
-  "requestFramePermissions": []
-}
