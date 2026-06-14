@@ -5,6 +5,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import LandingPage from "./pages/LandingPage";
 import Auth from "./pages/Auth";
 import Chat from "./pages/Chat";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -24,6 +25,16 @@ function App() {
             }
           />
           <Route path="*" element={<Navigate to="/" replace />} />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <SocketProvider>
+                  <Profile />
+                </SocketProvider>
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

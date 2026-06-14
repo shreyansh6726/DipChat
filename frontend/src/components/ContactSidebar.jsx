@@ -6,9 +6,11 @@ import { getContacts, addContact } from "../api/contacts";
 import ContactItem from "./ContactItem";
 import AddContactModal from "./AddContactModal";
 import "./ContactSidebar.css";
+import { useNavigate } from "react-router-dom";
 
 const ContactSidebar = ({ activeContact, onSelectContact }) => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const { onlineUsers } = useSocket();
   const [contacts, setContacts] = useState([]);
   const [collapsed, setCollapsed] = useState(false);
@@ -69,7 +71,11 @@ const ContactSidebar = ({ activeContact, onSelectContact }) => {
       >
         ☰
       </button>
-        <div className="contact-sidebar__user">
+        <div
+          className="contact-sidebar__user"
+          onClick={() => navigate("/profile")}
+          style={{ cursor: "pointer" }}
+        >
           <div className="contact-sidebar__avatar">
             {user.name.charAt(0).toUpperCase()}
           </div>
@@ -79,9 +85,6 @@ const ContactSidebar = ({ activeContact, onSelectContact }) => {
             <span className="contact-sidebar__user-id">@{user.userId}</span>
           </div>)}
         </div>
-        <button className="contact-sidebar__logout" onClick={logout} title="Logout">
-          ↪
-        </button>
       </div>
 
       {!collapsed && (

@@ -41,6 +41,18 @@ export const AuthProvider = ({ children }) => {
   setUser(newUser);
   }, []);
 
+  const updateUser = useCallback((newUser) => {
+    setUser(newUser);
+
+    if (localStorage.getItem("user")) {
+      localStorage.setItem("user", JSON.stringify(newUser));
+    }
+
+    if (sessionStorage.getItem("user")) {
+      sessionStorage.setItem("user", JSON.stringify(newUser));
+    }
+  }, []);
+
   const logout = useCallback(() => {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
@@ -53,7 +65,17 @@ export const AuthProvider = ({ children }) => {
 }, []);
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout, isAuthenticated: !!token }}>
+    <AuthContext.Provider
+  value={{
+    user,
+    token,
+    loading,
+    login,
+    logout,
+    updateUser,
+    isAuthenticated: !!token
+  }}
+>
       {children}
     </AuthContext.Provider>
   );

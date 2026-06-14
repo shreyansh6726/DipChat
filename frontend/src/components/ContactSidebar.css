@@ -156,3 +156,7 @@
 .contact-sidebar__menu:hover {
   background: var(--bg-hover);
 }
+
+.contact-sidebar__user:hover {
+  opacity: 0.85;
+}

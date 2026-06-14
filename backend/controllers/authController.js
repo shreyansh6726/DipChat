@@ -121,7 +121,65 @@ const login = async (req, res) => {
   }
 };
 
+const getProfile = async (req, res) => {
+  try {
+    const user = await User.findOne({
+      userNumber: req.user.userNumber
+    }).select("-password");
+
+    res.status(200).json({
+      success: true,
+      user
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+const updateProfile = async (req, res) => {
+  try {
+    const { name, userId, email } = req.body;
+
+    const user = await User.findOne({
+      userNumber: req.user.userNumber
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    user.name = name;
+    user.userId = userId;
+    user.email = email;
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      user: {
+        userNumber: user.userNumber,
+        name: user.name,
+        userId: user.userId,
+        email: user.email
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
 module.exports = {
   signup,
-  login
+  login,
+  getProfile,
+  updateProfile
 };
