@@ -122,3 +122,12 @@
   font-size: 0.875rem;
   color: var(--text-muted);
 }
+
+.contact-sidebar__user-name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
