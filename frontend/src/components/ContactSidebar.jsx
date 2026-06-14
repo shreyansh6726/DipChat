@@ -11,6 +11,7 @@ const ContactSidebar = ({ activeContact, onSelectContact }) => {
   const { user, logout } = useAuth();
   const { onlineUsers } = useSocket();
   const [contacts, setContacts] = useState([]);
+  const [collapsed, setCollapsed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [addLoading, setAddLoading] = useState(false);
@@ -56,23 +57,35 @@ const ContactSidebar = ({ activeContact, onSelectContact }) => {
   };
 
   return (
-    <aside className="contact-sidebar">
+    <aside
+    className={`contact-sidebar ${
+    collapsed ? "contact-sidebar--collapsed" : ""
+    }`}
+    >
       <div className="contact-sidebar__header">
+      <button
+        className="contact-sidebar__menu"
+        onClick={() => setCollapsed(!collapsed)}
+      >
+        ☰
+      </button>
         <div className="contact-sidebar__user">
           <div className="contact-sidebar__avatar">
             {user.name.charAt(0).toUpperCase()}
           </div>
+          {!collapsed && (
           <div className="contact-sidebar__user-info">
             <span className="contact-sidebar__user-name">{user.name}</span>
             <span className="contact-sidebar__user-id">@{user.userId}</span>
-          </div>
+          </div>)}
         </div>
         <button className="contact-sidebar__logout" onClick={logout} title="Logout">
           ↪
         </button>
       </div>
 
-      <div className="contact-sidebar__actions">
+      {!collapsed && (
+        <div className="contact-sidebar__actions">
         <motion.button
           className="contact-sidebar__add-btn"
           onClick={() => { setModalOpen(true); setAddError(""); }}
@@ -81,8 +94,9 @@ const ContactSidebar = ({ activeContact, onSelectContact }) => {
         >
           + Add Contact
         </motion.button>
-      </div>
+      </div>)}
 
+      {!collapsed && (
       <div className="contact-sidebar__list">
         {loading ? (
           <div className="contact-sidebar__loading">
@@ -109,7 +123,7 @@ const ContactSidebar = ({ activeContact, onSelectContact }) => {
             ))}
           </motion.div>
         )}
-      </div>
+      </div>)}
 
       <AddContactModal
         isOpen={modalOpen}

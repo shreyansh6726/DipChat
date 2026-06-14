@@ -131,3 +131,28 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.contact-sidebar {
+  transition: width 0.3s ease;
+}
+
+.contact-sidebar--collapsed {
+  width: 80px;
+  min-width: 80px;
+}
+
+.contact-sidebar__menu {
+  width: 36px;
+  height: 36px;
+  margin-right: 12px;
+  border-radius: var(--radius-sm);
+  color: white;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contact-sidebar__menu:hover {
+  background: var(--bg-hover);
+}
