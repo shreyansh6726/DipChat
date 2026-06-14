@@ -1,0 +1,31 @@
+.empty-chat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  background: var(--bg-primary);
+}
+
+.empty-chat__icon {
+  font-size: 3rem;
+  color: var(--accent);
+  opacity: 0.6;
+  margin-bottom: 1.25rem;
+}
+
+.empty-chat__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.empty-chat__desc {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  max-width: 280px;
+}

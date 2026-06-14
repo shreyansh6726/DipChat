@@ -3,23 +3,32 @@ const Contact = require("../models/contact");
 
 const addContact = async (req, res) => {
   try {
-    const { userNumber, targetUser } = req.body;
+    const { userNumber, targetUser, targetUserId } = req.body;
 
-    if (!userNumber || !targetUser) {
+    if (!userNumber || (!targetUser && !targetUserId)) {
       return res.status(400).json({
         success: false,
         message: "Missing fields"
       });
     }
 
-    const userExists = await User.findOne({
-      userNumber: targetUser
-    });
+    const userExists = targetUserId
+      ? await User.findOne({ userId: targetUserId })
+      : await User.findOne({ userNumber: targetUser });
+
+    const resolvedTargetUser = userExists?.userNumber;
 
     if (!userExists) {
       return res.status(404).json({
         success: false,
         message: "User not found"
+      });
+    }
+
+    if (resolvedTargetUser === userNumber) {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot add yourself"
       });
     }
 
@@ -34,14 +43,14 @@ const addContact = async (req, res) => {
       });
     }
 
-    if (contactBook.contacts.includes(targetUser)) {
+    if (contactBook.contacts.includes(resolvedTargetUser)) {
       return res.status(400).json({
         success: false,
         message: "Already added"
       });
     }
 
-    contactBook.contacts.push(targetUser);
+    contactBook.contacts.push(resolvedTargetUser);
 
     await contactBook.save();
 
