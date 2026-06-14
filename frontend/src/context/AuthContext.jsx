@@ -8,28 +8,49 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
+  const storedToken =
+    localStorage.getItem("token") || sessionStorage.getItem("token");
+
+  const storedUser =
+    localStorage.getItem("user") || sessionStorage.getItem("user");
+
+  if (storedToken && storedUser) {
+    setToken(storedToken);
+    setUser(JSON.parse(storedUser));
+  }
+
+  setLoading(false);
   }, []);
 
-  const login = useCallback((newToken, newUser) => {
+  const login = useCallback((newToken, newUser, persistent) => {
+  if (persistent) {
     localStorage.setItem("token", newToken);
     localStorage.setItem("user", JSON.stringify(newUser));
-    setToken(newToken);
-    setUser(newUser);
+
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("user");
+  } else {
+    sessionStorage.setItem("token", newToken);
+    sessionStorage.setItem("user", JSON.stringify(newUser));
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  }
+
+  setToken(newToken);
+  setUser(newUser);
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setToken(null);
-    setUser(null);
-  }, []);
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+
+  sessionStorage.removeItem("token");
+  sessionStorage.removeItem("user");
+
+  setToken(null);
+  setUser(null);
+}, []);
 
   return (
     <AuthContext.Provider value={{ user, token, loading, login, logout, isAuthenticated: !!token }}>

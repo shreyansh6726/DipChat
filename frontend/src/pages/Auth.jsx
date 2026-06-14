@@ -12,6 +12,7 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [keepLoggedIn, setKeepLoggedIn] = useState(true);
 
   const [loginForm, setLoginForm] = useState({ credential: "", password: "" });
   const [signupForm, setSignupForm] = useState({
@@ -34,7 +35,7 @@ const Auth = () => {
     try {
       const { data } = await login(loginForm);
       if (data.success) {
-        authLogin(data.token, data.user);
+        authLogin(data.token, data.user, keepLoggedIn);
         navigate("/chat");
       }
     } catch (err) {
@@ -139,6 +140,18 @@ const Auth = () => {
                   }
                   required
                 />
+              </div>
+              <div className="auth__remember">
+                <input
+                  type="checkbox"
+                  id="remember"
+                  checked={keepLoggedIn}
+                  onChange={() => setKeepLoggedIn(!keepLoggedIn)}
+                />
+
+                <label htmlFor="remember">
+                  Keep me logged in
+                </label>
               </div>
               <motion.button
                 type="submit"
