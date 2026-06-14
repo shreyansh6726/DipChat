@@ -16,7 +16,7 @@ const EmptyChatState = () => {
       >
         ◈
       </motion.div>
-      <h2 className="empty-chat__title">DipChat</h2>
+      <h2 className="empty-chat__title">Crez</h2>
       <p className="empty-chat__desc">
         Select a contact from the sidebar to start chatting
       </p>
