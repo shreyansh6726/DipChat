@@ -1,0 +1,15 @@
+node_modules/
+build/
+dist/
+frontend/dist/
+coverage/
+.DS_Store
+*.log
+
+# Environment files — commit .env.example only, never real .env
+.env
+.env.*
+frontend/.env
+frontend/.env.*
+!.env.example
+!frontend/.env.example
