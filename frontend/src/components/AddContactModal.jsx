@@ -37,7 +37,7 @@ const AddContactModal = ({ isOpen, onClose, onAdd, loading, error }) => {
             >
             <h3 className="add-contact-modal__title">Add Contact</h3>
             <p className="add-contact-modal__desc">
-              Enter the User ID of the person you want to connect with.
+              Enter their User ID (the @ handle shown on their profile).
             </p>
             <form onSubmit={handleSubmit}>
               <input

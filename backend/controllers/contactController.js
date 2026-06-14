@@ -1,40 +1,78 @@
 const User = require("../models/users");
 const Contact = require("../models/contact");
 
+const escapeRegex = (value) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const resolveTargetUserNumber = async (targetUserId, targetUser) => {
+  if (targetUser !== undefined && targetUser !== null && targetUser !== "") {
+    const byNumber = await User.findOne({
+      userNumber: Number(targetUser)
+    });
+    if (byNumber) return byNumber.userNumber;
+  }
+
+  if (!targetUserId) return null;
+
+  const normalized = String(targetUserId).trim().replace(/^@+/, "");
+  if (!normalized) return null;
+
+  let user = await User.findOne({ userId: normalized });
+
+  if (!user) {
+    user = await User.findOne({
+      userId: {
+        $regex: new RegExp(`^${escapeRegex(normalized)}$`, "i")
+      }
+    });
+  }
+
+  if (!user && /^\d+$/.test(normalized)) {
+    user = await User.findOne({ userNumber: Number(normalized) });
+  }
+
+  return user ? user.userNumber : null;
+};
+
 const addContact = async (req, res) => {
   try {
-    const { userNumber, targetUser, targetUserId } = req.body;
+    const { targetUser, targetUserId } = req.body;
+    const userNumber = Number(req.user?.userNumber ?? req.body.userNumber);
 
-    if (!userNumber || (!targetUser && !targetUserId)) {
+    if (!userNumber || Number.isNaN(userNumber)) {
       return res.status(400).json({
         success: false,
-        message: "Missing fields"
+        message: "Invalid session. Please log in again."
       });
     }
 
-    const userExists = targetUserId
-      ? await User.findOne({ userId: targetUserId })
-      : await User.findOne({ userNumber: targetUser });
+    if (!targetUser && !targetUserId) {
+      return res.status(400).json({
+        success: false,
+        message: "Enter a User ID to add"
+      });
+    }
 
-    const resolvedTargetUser = userExists?.userNumber;
+    const resolvedTargetUser = await resolveTargetUserNumber(
+      targetUserId,
+      targetUser
+    );
 
-    if (!userExists) {
+    if (!resolvedTargetUser) {
       return res.status(404).json({
         success: false,
-        message: "User not found"
+        message: "User not found. Check the User ID and try again."
       });
     }
 
     if (resolvedTargetUser === userNumber) {
       return res.status(400).json({
         success: false,
-        message: "Cannot add yourself"
+        message: "You cannot add yourself as a contact"
       });
     }
 
-    const contactBook = await Contact.findOne({
-      userNumber
-    });
+    const contactBook = await Contact.findOne({ userNumber });
 
     if (!contactBook) {
       return res.status(404).json({
@@ -46,12 +84,11 @@ const addContact = async (req, res) => {
     if (contactBook.contacts.includes(resolvedTargetUser)) {
       return res.status(400).json({
         success: false,
-        message: "Already added"
+        message: "This contact is already in your list"
       });
     }
 
     contactBook.contacts.push(resolvedTargetUser);
-
     await contactBook.save();
 
     res.status(200).json({
@@ -68,7 +105,8 @@ const addContact = async (req, res) => {
 
 const removeContact = async (req, res) => {
   try {
-    const { userNumber, targetUser } = req.body;
+    const { targetUser } = req.body;
+    const userNumber = Number(req.user?.userNumber ?? req.body.userNumber);
 
     const contactBook = await Contact.findOne({
       userNumber
@@ -82,7 +120,7 @@ const removeContact = async (req, res) => {
     }
 
     contactBook.contacts = contactBook.contacts.filter(
-      contact => contact !== targetUser
+      (contact) => contact !== Number(targetUser)
     );
 
     await contactBook.save();
@@ -101,7 +139,7 @@ const removeContact = async (req, res) => {
 
 const getContacts = async (req, res) => {
   try {
-    const { userNumber } = req.params;
+    const userNumber = Number(req.user?.userNumber ?? req.params.userNumber);
 
     const contactBook = await Contact.findOne({
       userNumber

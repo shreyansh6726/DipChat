@@ -33,11 +33,17 @@ const ContactSidebar = ({ activeContact, onSelectContact }) => {
     fetchContacts();
   }, [fetchContacts]);
 
-  const handleAddContact = async (targetUserId) => {
+  const handleAddContact = async (rawInput) => {
+    const targetUserId = rawInput.trim().replace(/^@+/, "");
+    if (!targetUserId) {
+      setAddError("Enter a User ID");
+      return;
+    }
+
     setAddLoading(true);
     setAddError("");
     try {
-      const { data } = await addContact(user.userNumber, targetUserId);
+      const { data } = await addContact(targetUserId);
       if (data.success) {
         setModalOpen(false);
         await fetchContacts();
